@@ -1,0 +1,45 @@
+<launch>
+  <!--
+    ============================================================================
+    在线模式总入口（run_mode=3 时由各数据集 launch include）
+    ============================================================================
+    这一层只负责“数据从哪来 / 推理谁来起”，模型配置全部在 semantic_inference.launch：
+      1. 参数校验：语义点云话题为空 -> 直接抛错并说明原因；
+      2. 语义推理层：include online/semantic_inference.launch（话题透传，模型用它的默认值）；
+         可以用 launch_semantic:=false 关掉（推理在别的机器/终端跑）；
+      3. 可选播包：launch_bag:=true 时用 rosbag play 只播点云话题。
+    ============================================================================
+  -->
+  <arg name="lidar_topic" default="/kitti/velo/pointcloud"/>   <!-- 原始点云 -->
+  <arg name="semantic_cloud_topic" default=""/>                 <!-- 推理输出 / 核心订阅 -->
+  <arg name="launch_semantic" default="true"/>
+  <arg name="semantic_debug" default="false"/>
+
+  <arg name="launch_bag" default="false"/>
+  <arg name="bag_file" default=""/>
+  <arg name="bag_rate" default="1.0"/>
+  <arg name="bag_start_offset" default="0.0"/>
+  <arg name="bag_delay" default="0.0"/>
+  <!-- 播包前实际等待时间：如果本层亲手起了推理节点，默认等 40s 让它把模型加载完，
+       否则开头的包会被白白播掉（显式传 bag_delay>0 则以传入值为准） -->
+  <arg name="bag_delay_eff"
+       value="$(eval float(arg('bag_delay')) if float(arg('bag_delay')) > 0 else (40.0 if arg('launch_semantic') else 0.0))"/>
+
+  <!-- 校验：在线模式必须指定语义点云话题（它同时是推理的输出话题和核心的订阅话题） -->
+  <arg name="online_topic_check"
+       value="$(eval '' if arg('semantic_cloud_topic') else (_ for _ in ()).throw(RuntimeError('[run_mode=3 在线语义模式] 必须指定 semantic_cloud_topic（不能为空）：它既是 semantic_inference.launch 的输出话题，也是 DeRo 核心订阅的话题。例如\n  roslaunch deros kitti_start.launch sequence:=00 run_mode:=3 semantic_cloud_topic:=/kitti/velo/semantic_pointcloud\n如果只想离线读 bag，请用 run_mode:=2（或不传 run_mode）。')))"/>
+
+  <!-- 语义推理层：只透传话题，模型/权重等全部用 semantic_inference.launch 自己的设置 -->
+  <include if="$(arg launch_semantic)"
+           file="$(find deros)/launch/online/semantic_inference.launch">
+      <arg name="cloud_topic" value="$(arg lidar_topic)"/>
+      <arg name="semantic_topic" value="$(arg semantic_cloud_topic)"/>
+      <arg name="debug" value="$(arg semantic_debug)"/>
+  </include>
+
+  <!-- 可选播包：播点云话题 + /tf（4D 模型做运动补偿要用）；bag_file 为空时自动跳过 -->
+  <node if="$(eval arg('launch_bag') and arg('bag_file') != '')"
+        pkg="rosbag" type="play" name="bag_player" output="screen"
+        args="--topics $(arg lidar_topic) /tf /tf_static --rate $(arg bag_rate) -s $(arg bag_start_offset) -d $(arg bag_delay_eff) $(arg bag_file)"/>
+
+</launch>

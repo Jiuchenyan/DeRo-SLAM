@@ -1,0 +1,117 @@
+<launch>
+  <arg name="icp_tolerance" default="1e-4"/><!-- ICP stop threshold; 0.001 is ~20% faster, sub-mm loss -->
+  <arg name="database_path" default="/media/heu/data/Study/Library/data_base/KITTI-360/"/>
+  <arg name="save_path" default="$(find deros)/save/"/>   <!-- output dir, keep the trailing slash -->
+  <arg name="sequence" default="03" />
+  <arg name="visualize" default="true"/>
+  <arg name="recordbag" default="false"/>
+  <arg name="ratehz" default="10"/>
+  <arg name="run_mode" default="2"/>      <!-- [0-ROS_RUN] [1-EVAL_ONLY] [2-EVAL_AND_ROS] [3-ONLINE_SEMANTIC] -->
+  <arg name="lidar_topic" default="/lidar"/>   <!-- raw cloud topic (bag playback in the online mode) -->
+  <!-- run_mode=3 (online semantic mode): the semantic cloud topic is mandatory -->
+  <arg name="semantic_cloud_topic" default=""/>
+  <arg name="online_queue_size" default="30"/>
+  <arg name="online_idle_timeout" default="5.0"/>   <!-- no cloud for this long = end of stream (0 = wait forever) -->
+  <!-- optional bag playback, only meaningful in the online mode -->
+  <arg name="launch_bag" default="false"/>
+  <arg name="bag_rate" default="1.0"/>
+  <arg name="bag_delay" default="0.0"/>
+  <arg name="launch_semantic" default="$(eval arg('launch_bag'))"/>   <!-- start the semantic node here; false = it runs elsewhere -->
+  <arg name="bag_file" default="$(arg database_path)/rosbag/kitti360_$(arg sequence).bag"/>   <!-- used by the offline loader and by the online bag playback -->
+  <arg name="gdb_mode" default="false"/>
+  <arg name="cloud_start_idx" default="0"/>
+  <arg name="data_set" default="kitti360"/>
+  <arg name="eval_cmd" default="python3 $(find deros)/scripts/eval/detal_eval_$(arg data_set).py --gt_file $(arg database_path)/poses/$(arg sequence).txt --pred_file $(arg save_path)evo_log/$(arg data_set)_mapping_$(arg sequence).txt --calib_file $(arg database_path)/calib/$(arg sequence).txt"/>   <!-- runs at the end of every run mode -->
+
+  <!-- <arg name="cloud_start_idx" default="4391"/> -->
+
+  <!-- <arg name="cloud_start_idx" default="$(eval '4391' if '$(arg sequence)' == '02' else '0')" /> -->
+
+  <node pkg="deros" name="deros_node" type="deros_node" output="screen" launch-prefix="$(eval 'gdb -ex run -args' if arg('gdb_mode') else '')">
+      <param name="data_set" value="$(arg data_set)"/>
+      <param name="bag_path" value="$(arg bag_file)"/>
+      <param name="lidar_topic" value="$(arg lidar_topic)"/>
+
+      <param name="save_path" value="$(arg save_path)"/>
+      <param name="odometry_result_path" value="$(arg save_path)evo_log/kitti360_odometry_$(arg sequence).txt"/>
+      <param name="mapping_result_path" value="$(arg save_path)evo_log/kitti360_mapping_$(arg sequence).txt"/>
+
+      <param name="eval_cmd" value="$(arg eval_cmd)"/>
+
+
+        
+      <param name="ratehz" value="$(arg ratehz)"/>
+      <param name="run_mode" value="$(arg run_mode)"/>
+      <param name="semantic_cloud_topic" value="$(arg semantic_cloud_topic)"/>
+      <param name="online_queue_size" value="$(arg online_queue_size)"/>
+      <param name="online_idle_timeout" value="$(arg online_idle_timeout)"/>
+      <param name="enable_eval" value="true"/>
+      <param name="cloud_start_idx" value="$(arg cloud_start_idx)"/>
+      <param name="using_intensity" value="true"/>
+      <param name="save_global_map" value="true"/>
+
+      <!-- odometry -->
+      <param name="odom_frame" value="odom"/>
+      <param name="child_frame" value="base_link"/>
+      <param name="max_range" value="100.0"/>
+      <param name="min_range" value="5.0"/>
+      <param name="voxel_size" value="1.0"/>
+      <param name="max_points_per_voxel" value="20"/>
+
+      <!-- ICP termination: looser tolerance = faster, sub-mm accuracy loss -->
+      <param name="icp_max_iterations" value="500"/>
+      <param name="icp_tolerance" value="$(arg icp_tolerance)"/>
+
+      <!-- mapping -->
+      <param name="bev_grid_size" value="0.2"/>
+      <param name="close_kernel_size" value="3"/>
+      <param name="loop_num_exclude" value="150"/>
+      <param name="loop_num_search" value="3"/>
+      <param name="max_expected_sigma" value="3"/>
+      <param name="instance_threshold" value="3"/>
+
+      <param name="nFeatures" value="300"/>
+      <param name="scaleFactor" value="1.2"/>
+      <param name="nLevels" value="4"/>
+      <param name="iniThFAST" value="30"/>
+      <param name="minThFAST" value="10"/>
+
+
+      <param name="keyframe_interval" value="10"/>
+      <param name="pgo_frame_interval" value="10"/>
+      <param name="enable_pgo" value="true"/>
+      <param name="odom_rot_noise" value="1e-4"/>
+      <param name="odom_trans_noise" value="1e-4"/>
+      <param name="loop_rot_noise" value="0.1"/>
+      <param name="loop_trans_noise" value="0.1"/>
+
+      <param name="out_dists_th" value="0.15"/>
+
+  </node>
+    
+  <!-- Online mode (run_mode = 3): validation + semantic inference + optional bag playback.
+       Model / weight settings live in launch/online/semantic_inference.launch. -->
+  <group if="$(eval int(arg('run_mode')) == 3)">
+      <include file="$(find deros)/launch/online/online_input.launch">
+          <arg name="lidar_topic" value="$(arg lidar_topic)"/>
+          <arg name="semantic_cloud_topic" value="$(arg semantic_cloud_topic)"/>
+          <arg name="launch_semantic" value="$(arg launch_semantic)"/>
+          <arg name="launch_bag" value="$(arg launch_bag)"/>
+          <arg name="bag_file" value="$(arg bag_file)"/>
+          <arg name="bag_rate" value="$(arg bag_rate)"/>
+          <arg name="bag_delay" value="$(arg bag_delay)"/>
+      </include>
+  </group>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="0 0 0 0 0 0  base_link velodyne 10" />
+
+  <group if="$(eval int(arg('run_mode')) != 1 and arg('visualize'))">
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find deros)/config/rviz_cfg.rviz"/>
+  </group>
+
+  <group if="$(eval int(arg('run_mode')) != 1 and arg('recordbag'))">
+    <node pkg="rosbag" type="record" name="bag_record" 
+          args="--topic /ground_truth /odometry -O  $(find deros)/save/debug.bag " />
+  </group>
+
+</launch>
