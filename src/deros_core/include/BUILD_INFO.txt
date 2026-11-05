@@ -1,0 +1,9 @@
+DeRo-SLAM core library, binary distribution.
+
+built on      : 2026-11-05 00:36:57 +0800
+from source   : private source tree
+compiler      : c++ (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
+library       : lib/libderos_core.so
+sha256        : efe4a18508e993fdf61855fa9a88fc09c7605a71903c6719bdb3abde3c8ebbf8
+
+The sources of the algorithms are not part of this distribution.

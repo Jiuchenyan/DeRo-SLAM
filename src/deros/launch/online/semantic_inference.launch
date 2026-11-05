@@ -1,0 +1,89 @@
+<launch>
+  <!--
+    ============================================================================
+    语义推理层（模型/权重/推理参数都在这一层配置）
+    ============================================================================
+    输入：原始点云话题  cloud_topic
+    输出：含语义标签的点云话题 semantic_topic
+          （字段 x,y,z,intensity,ring,time,label(UINT16 原始 SemanticKITTI 标签),prob(UINT8)）
+
+    换后端只改 semantic_node；换权重只改 model_path（留空则用各后端的默认权重）。
+    run_mode=3 时由 online/online_input.launch 自动 include（也可单独启动）。
+
+    典型用法：
+      roslaunch deros semantic_inference.launch
+      roslaunch deros semantic_inference.launch semantic_node:=randlanet
+      roslaunch deros semantic_inference.launch model_path:=/abs/path/to/xxx.pt
+      roslaunch deros semantic_inference.launch cloud_topic:=/lidar semantic_topic:=/lidar_semantic
+    ============================================================================
+  -->
+  <!-- ===== 话题 ===== -->
+  <arg name="cloud_topic" default="/kitti/velo/pointcloud"/>          <!-- 输入：原始点云 -->
+  <arg name="semantic_topic" default="/kitti/velo/semantic_pointcloud"/> <!-- 输出：语义点云 -->
+
+  <!-- ===== 推理后端 ===== -->
+  <arg name="semantic_node" default="cylinder3d"/>   <!-- cylinder3d / randlanet / segnet4d -->
+
+  <!-- ===== 模型配置（唯一入口）===== -->
+  <!-- 通用权重路径：空 = 用下面各后端的默认权重；可给绝对路径（相对路径按该后端工程根目录解析） -->
+  <arg name="model_path" default=""/>
+  <arg name="cylinder3d_root" default="/home/heu/deep_learning/lib/cylinder3d"/>
+  <arg name="cylinder3d_default_model" default="model_save_dir/student8_61.53.pt"/>
+  <arg name="randlanet_root" default="/home/heu/deep_learning/lib/RandLA-Net-pytorch-main"/>
+  <arg name="randlanet_default_model" default="$(arg randlanet_root)/pretrain_model/checkpoint.tar"/>
+  <arg name="segnet4d_root" default="/home/heu/deep_learning/lib/SegNet4D"/>
+  <arg name="segnet4d_default_model" default="checkpoint/semantickitti.ckpt..bin"/>
+
+  <!-- 实际生效的权重路径 -->
+  <arg name="model_path_eff"
+       value="$(eval arg('model_path') if arg('model_path') else (arg('cylinder3d_default_model') if arg('semantic_node') == 'cylinder3d' else (arg('randlanet_default_model') if arg('semantic_node') == 'randlanet' else arg('segnet4d_default_model'))))"/>
+
+  <!-- ===== 推理行为 ===== -->
+  <arg name="keep_out_of_range" default="true"/>   <!-- 超出模型感知范围的点：保留几何、label=0 -->
+  <!-- SegNet4D 专用：用哪个头输出
+       semantic     = 20 类（0,10..81，静态语义）
+       semantic_all = 26 类（额外含动态：252 移动车 / 253 骑行 / 254 行人 / 255 骑摩托 / 258 卡车 / 259 其他车）
+       mos          = 3 类（unlabeled / static / moving） -->
+  <arg name="label_head" default="semantic_all"/>
+  <arg name="debug" default="false"/>              <!-- 打印每帧 parse/infer/pack 耗时 -->
+  <!-- SegNet4D 是 4D 模型，需要前后帧的相对位姿做运动补偿 -->
+  <arg name="motion_source" default="tf"/>          <!-- tf / none -->
+  <arg name="tf_fixed_frame" default="world"/>
+  <arg name="tf_base_frame" default="base_link"/>
+
+  <node if="$(eval arg('semantic_node') == 'cylinder3d')"
+        pkg="deros" type="run_cylinder3d.sh" name="deros_cylinder3d_semantic"
+        output="screen" required="true">
+      <param name="cloud_topic" value="$(arg cloud_topic)"/>
+      <param name="semantic_topic" value="$(arg semantic_topic)"/>
+      <param name="cylinder3d_root" value="$(arg cylinder3d_root)"/>
+      <param name="model_path" value="$(arg model_path_eff)"/>
+      <param name="keep_out_of_range" value="$(arg keep_out_of_range)"/>
+      <param name="debug" value="$(arg debug)"/>
+  </node>
+
+  <node if="$(eval arg('semantic_node') == 'randlanet')"
+        pkg="deros" type="run_randlanet.sh" name="deros_randlanet_semantic"
+        output="screen" required="true">
+      <param name="cloud_topic" value="$(arg cloud_topic)"/>
+      <param name="semantic_topic" value="$(arg semantic_topic)"/>
+      <param name="randlanet_root" value="$(arg randlanet_root)"/>
+      <param name="model_path" value="$(arg model_path_eff)"/>
+      <param name="debug" value="$(arg debug)"/>
+  </node>
+  <node if="$(eval arg('semantic_node') == 'segnet4d')"
+        pkg="deros" type="run_segnet4d.sh" name="deros_segnet4d_semantic"
+        output="screen" required="true">
+      <param name="cloud_topic" value="$(arg cloud_topic)"/>
+      <param name="semantic_topic" value="$(arg semantic_topic)"/>
+      <param name="segnet4d_root" value="$(arg segnet4d_root)"/>
+      <param name="model_path" value="$(arg model_path_eff)"/>
+      <param name="keep_out_of_range" value="$(arg keep_out_of_range)"/>
+      <param name="label_head" value="$(arg label_head)"/>
+      <param name="motion_source" value="$(arg motion_source)"/>
+      <param name="tf_fixed_frame" value="$(arg tf_fixed_frame)"/>
+      <param name="tf_base_frame" value="$(arg tf_base_frame)"/>
+      <param name="debug" value="$(arg debug)"/>
+  </node>
+
+</launch>

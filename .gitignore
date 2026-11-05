@@ -1,0 +1,22 @@
+# catkin / build artefacts
+build/
+devel/
+install/
+logs/
+.cache/
+dist/
+
+# generated results
+src/deros/save/evo_log/*.txt
+src/deros/save/map/*
+__pycache__/
+
+# catkin writes this symlink into the source space
+src/CMakeLists.txt
+src/.catkin_tools/
+
+# local only: the packaging tools need the private source tree
+.vscode/
+.catkin_workspace
+package.sh
+tools/
