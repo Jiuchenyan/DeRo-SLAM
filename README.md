@@ -130,6 +130,38 @@ See **[BUILD.md](BUILD.md)** for dependencies, the full argument list and the
 Launch files for MulRan, Geode and SLABIM are also included under
 `src/deros/launch/datasets/`.
 
+## Test data
+
+A complete sequence is bundled so a first end-to-end run needs nothing but this
+repository: KITTI odometry **sequence 04**, 271 frames.
+
+| file | content |
+|---|---|
+| [kitti04.bag](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04.bag) | `sensor_msgs/PointCloud2` on `/kitti/velo/pointcloud` (650 MB) |
+| [kitti04_gt.txt](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04_gt.txt) | ground-truth poses, one 3×4 matrix per frame |
+| [kitti04_calib.txt](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04_calib.txt) | calibration (`P0`–`P3` and `Tr`) used by the evaluation script |
+
+```bash
+mkdir -p ~/data/kitti04 && cd ~/data/kitti04
+for f in kitti04.bag kitti04_gt.txt kitti04_calib.txt; do
+  wget https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/$f
+done
+
+# run + evaluate
+roslaunch deros kitti_start.launch sequence:=04 run_mode:=2 \
+    launch_bag:=false launch_semantic:=false visualize:=false \
+    bag_file:=$HOME/data/kitti04/kitti04.bag \
+    save_path:=$HOME/data/kitti04/out/ \
+    eval_cmd:="python3 \$(rospack find deros)/scripts/eval/detal_eval_kitti.py \
+               --gt_file $HOME/data/kitti04/kitti04_gt.txt \
+               --pred_file $HOME/data/kitti04/out/evo_log/kitti_mapping_04.txt \
+               --calib_file $HOME/data/kitti04/kitti04_calib.txt"
+```
+
+The trajectories land in `~/data/kitti04/out/evo_log/`, the global map in
+`~/data/kitti04/out/map/`, and the ATE is printed when the run finishes.
+
+
 ## Online semantic mode
 
 Setting `run_mode:=3` replaces the bag reader with a subscriber to a semantic
