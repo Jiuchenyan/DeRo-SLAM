@@ -9,9 +9,24 @@ read and modified freely.
 ## Requirements
 
 - Ubuntu 20.04 + ROS Noetic
-- OpenCV, PCL, GTSAM (the usual Noetic packages)
-- Eigen and Sophus headers, vendored under
-  `src/deros_core/include/third_party` — nothing else to install
+- OpenCV 4, TBB, glog, OpenBLAS and Suitesparse (the shared libraries
+  `libderos_core.so` links against):
+
+```bash
+sudo apt install libgoogle-glog-dev libsuitesparse-dev libopenblas-dev \
+                 libtbb-dev libopencv-dev
+```
+
+- GTSAM 4.x (`libgtsam.so.4`), built from source or from your distribution
+- Eigen and Sophus headers are vendored under
+  `src/deros_core/include/third_party` — nothing to install
+- No GPU / CUDA is needed
+
+Check the runtime dependencies of the prebuilt core with:
+
+```bash
+ldd src/deros_core/lib/libderos_core.so | grep "not found"
+```
 
 ## Build
 

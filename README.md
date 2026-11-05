@@ -77,6 +77,30 @@ with 1.47 m for FAST-LIO2 and 2.30 m for GenZ-ICP; LIO-SAM diverges at frame 104
         └── save/                where trajectories and maps are written
 ```
 
+## Requirements
+
+- Ubuntu 20.04 with ROS Noetic (what the results were produced on)
+- OpenCV 4, TBB and the Suitesparse libraries that `libderos_core.so` links
+  against:
+
+```bash
+sudo apt install libgoogle-glog-dev libsuitesparse-dev libopenblas-dev \
+                 libtbb-dev libopencv-dev
+```
+
+- GTSAM 4.x (`libgtsam.so.4`) — build it from source or use your
+  distribution's package
+- Eigen and Sophus are vendored under `src/deros_core/include/third_party`;
+  nothing else has to be installed for them
+
+No GPU is required: the prebuilt library contains no CUDA dependency.
+
+To check that nothing is missing on your machine:
+
+```bash
+ldd src/deros_core/lib/libderos_core.so | grep "not found"
+```
+
 ## Quick start
 
 ```bash
@@ -103,7 +127,7 @@ See **[BUILD.md](BUILD.md)** for dependencies, the full argument list and the
 | TrackLoop | `trackloop_start.launch` |
 | SubT-MRS | `subt_start.launch` |
 
-Launch files for MulRan, Geode and MID360 are also included under
+Launch files for MulRan, Geode and SLABIM are also included under
 `src/deros/launch/datasets/`.
 
 ## Online semantic mode
