@@ -141,7 +141,7 @@ repository: KITTI odometry **sequence 04**, 271 frames.
 
 | file | content |
 |---|---|
-| [kitti04.bag](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04.bag) | `sensor_msgs/PointCloud2` on `/kitti/velo/pointcloud` (650 MB) |
+| [kitti04.bag](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04.bag) | `sensor_msgs/PointCloud2` on `/kitti/velo/pointcloud`, per-point semantic labels from Cylinder3D inference (650 MB) |
 | [kitti04_gt.txt](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04_gt.txt) | ground-truth poses, one 3×4 matrix per frame |
 | [kitti04_calib.txt](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04_calib.txt) | calibration (`P0`–`P3` and `Tr`) used by the evaluation script |
 
@@ -164,6 +164,14 @@ roslaunch deros kitti_start.launch sequence:=04 run_mode:=2 \
 
 The trajectories land in `~/data/kitti04/out/evo_log/`, the global map in
 `~/data/kitti04/out/map/`, and the ATE is printed when the run finishes.
+
+The semantic labels carried by the bag were produced with **Cylinder3D**
+(greedy label mass); the **SemanticKITTI ground-truth** labels can be used
+instead without regenerating anything, since they share the same encoding. The
+`label` field is `uint32`: the class id sits in the low 16 bits and the instance
+id, when present, in the high 16 bits — the loader masks it with `0xffff`, so
+ground-truth files (which carry instance ids) and pure predictions (which do
+not) are both accepted.
 
 
 ## Online semantic mode
