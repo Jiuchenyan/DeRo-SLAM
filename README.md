@@ -165,9 +165,9 @@ roslaunch deros kitti_start.launch sequence:=04 run_mode:=2 \
 The trajectories land in `~/data/kitti04/out/evo_log/`, the global map in
 `~/data/kitti04/out/map/`, and the ATE is printed when the run finishes.
 
-The semantic labels carried by the bag were produced with **Cylinder3D**
-(greedy label mass); the **SemanticKITTI ground-truth** labels can be used
-instead without regenerating anything, since they share the same encoding. The
+The semantic labels in the bag were produced by running **Cylinder3D**
+inference on the raw scans; the **SemanticKITTI ground-truth** labels can be
+used instead without regenerating anything, since they share the same encoding. The
 `label` field is `uint32`: the class id sits in the low 16 bits and the instance
 id, when present, in the high 16 bits — the loader masks it with `0xffff`, so
 ground-truth files (which carry instance ids) and pure predictions (which do
