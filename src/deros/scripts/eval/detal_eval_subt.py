@@ -225,15 +225,15 @@ def read_kitti360_poses(pose_file: str):
 sequences = "09"
 def main():
     parser = argparse.ArgumentParser(description='Evaluate SLAM on KITTI-360')
-    parser.add_argument('--gt_file', type=str, default='/media/heu/data/Study/Library/data_base/KITTI-360/sequences/'+sequences+'/poses/poses.txt')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/DeRo-SLAM/src/ros/save/evo_log/kitti360_mapping_'+sequences+'.txt')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/SG-SLAM/src/ros/save/kitti360_slam_'+sequences+'.txt')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/suma++/save_results/kitti360_pose_'+sequences+'.txt') 
+    parser.add_argument('--gt_file', type=str, required=True+sequences+'/poses/poses.txt')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt') 
     # parser.add_argument('--pred_file',     type=str, default='../save/evo_log/kiss-icp/kitti360_odometry_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/SAGE/results/kitti360/kitti360_optimized_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/SAGE/results/kitti360/kitti360_no_foreground_optimized_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/saloam/result/kitti360/kitti360_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/MULLS/result/kitti360/pose_l_lo_mulls_kitti360_'+sequences+'_bin.txt',  help='file path of the ground truth odometry')
+    parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True+sequences+'_bin.txt',  help='file path of the ground truth odometry')
     parser.add_argument('--seq', type=str, default=sequences)
     args = parser.parse_args()
 

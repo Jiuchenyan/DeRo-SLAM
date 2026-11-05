@@ -10,7 +10,7 @@ import faiss
 from numba import jit, prange
 import traceback
 
-DEFAULT_RANDLANET_ROOT = "/home/heu/deep_learning/lib/RandLA-Net-pytorch-main"
+DEFAULT_RANDLANET_ROOT = os.path.expanduser("~/deep_learning/lib/RandLA-Net-pytorch-main")
 RANDLANET_ROOT = DEFAULT_RANDLANET_ROOT
 WEIGHT_PATH = None          # 由 setup() 填写
 cfg = None                  # 由 setup() 填写

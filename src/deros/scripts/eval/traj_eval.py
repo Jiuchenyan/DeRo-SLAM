@@ -26,14 +26,14 @@ def main(gt_file, preb_file, calib_file):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='KITTI Evaluation toolkit')
-    parser.add_argument('--gt_file',     type=str, default='/media/heu/data/Study/Library/data_base/KITTI/kitti_odometry/poses/'+sequences+'.txt',  help='file of the ground truth odometry')
-    parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/saloam/result/kitti/kitti_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/DeRo-SLAM/src/ros/save/evo_log/kitti_mapping_'+sequences+'.txt', help='预测文件：纯12维KITTI格式')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/SG-SLAM/src/ros/save/kitti_slam_'+sequences+'.txt', help='预测文件：纯12维KITTI格式')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/SAGE/results/kitti/kitti_optimized_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/SAGE/results/kitti/kitti_no_foreground_optimized_'+sequences+'.txt',  help='file path of the ground truth odometry')
+    parser.add_argument('--gt_file',     type=str, required=True+sequences+'.txt',  help='file of the ground truth odometry')
+    parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt', help='预测文件：纯12维KITTI格式')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt', help='预测文件：纯12维KITTI格式')
+    # parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
     # parser.add_argument('--pred_file',     type=str, default='../save/evo_log/kiss-icp/kitti_odometry_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    parser.add_argument('--calib_file',type=str, default='/media/heu/data/Study/Library/data_base/KITTI/kitti_odometry/sequences/'+sequences+'/calib.txt')
+    parser.add_argument('--calib_file',type=str, required=True+sequences+'/calib.txt')
     args = parser.parse_args()
 
     main(args.gt_file, args.pred_file, args.calib_file)

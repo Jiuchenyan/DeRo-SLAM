@@ -114,13 +114,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     seq = "00"
-    base_path = '/media/heu/data/Study/Library/data_base/KITTI'
+    base_path = 'data/KITTI'
 
     gt_file = args.gt_file if args.gt_file else f'{base_path}/poses/{seq}.txt'
     pred_file = args.pred_file if args.pred_file else f'../save/evo_log/kitti_mapping_{seq}.txt'
     # pred_file = args.pred_file if args.pred_file else f'../save/evo_log/kitti_odometry_{seq}.txt'
-    # pred_file = args.pred_file if args.pred_file else f'/home/heu/ros/projs/SG-SLAM/src/ros/save/kitti_odometry_08.txt'
-    # pred_file = args.pred_file if args.pred_file else f'/home/heu/ros/projs/SG-SLAM/src/ros/save/kitti_slam_08.txt'
     calib_file = args.calib_file if args.calib_file else f'{base_path}/calib/{seq}.txt'
 
     main(gt_file, pred_file, calib_file)

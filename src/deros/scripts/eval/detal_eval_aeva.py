@@ -225,13 +225,13 @@ def read_kitti360_poses(pose_file: str):
 sequences = "Building61_NorthGate_Track"
 def main():
     parser = argparse.ArgumentParser(description='Evaluate SLAM on KITTI-360')
-    parser.add_argument('--gt_file', type=str, default='/media/heu/data/Study/Library/data_base/My_Data/sequences/'+sequences+'/pose/lidar_poses.txt')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/DeRo-SLAM/src/ros/save/evo_log/our_dataset_mapping_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/SG-SLAM/src/ros/save/our_dataset_slam_Building61_NorthGate_Track.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/suma++/save_results/aeva_pose.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/MULLS/result/avea/pose_l_lo_mulls_avea_Building61_NorthGate_Track_bin.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/saloam/result/aeva/aeva_Building61_NorthGate_Track.txt',  help='file path of the ground truth odometry')
-    parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/SAGE/results/aeva/Building61_NorthGate_optimized.txt',  help='file path of the ground truth odometry')
+    parser.add_argument('--gt_file', type=str, required=True+sequences+'/pose/lidar_poses.txt')
+    # parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True,  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True,  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True,  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file',     type=str, required=True,  help='file path of the ground truth odometry')
+    parser.add_argument('--pred_file',     type=str, required=True,  help='file path of the ground truth odometry')
     parser.add_argument('--seq', type=str, default=sequences)
     args = parser.parse_args()
 

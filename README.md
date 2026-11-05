@@ -130,6 +130,10 @@ See **[BUILD.md](BUILD.md)** for dependencies, the full argument list and the
 Launch files for MulRan, Geode and SLABIM are also included under
 `src/deros/launch/datasets/`.
 
+Each launch file expects its dataset under `~/data/<dataset>` by default
+(`~/data/KITTI`, `~/data/KITTI-360`, `~/data/mulran`, …). If your data lives
+elsewhere, pass `database_path:=/your/path` on the command line.
+
 ## Test data
 
 A complete sequence is bundled so a first end-to-end run needs nothing but this
@@ -191,7 +195,10 @@ above use offline labels.
 
 ## License
 
-To be determined. Until a license is added, all rights are reserved.
+Released under the MIT License — see [LICENSE](LICENSE).
+
+The front-end registration code derives from KISS-ICP (MIT, Copyright (c) 2022
+Ignacio Vizzo), whose notice is retained in the corresponding source files.
 
 ---
 

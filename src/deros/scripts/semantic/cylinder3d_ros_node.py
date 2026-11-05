@@ -9,7 +9,7 @@ Cylinder3D 在线语义推理节点
   2. 输出字段：x, y, z, intensity, ring, time, label(UINT16 原始 SemanticKITTI 标签), prob(UINT8)
      （原脚本把 label 写成可视化灰度颜色，DeRo 的 label_map 无法反解）；
   3. **工程根目录 / 权重路径 / 感知半径开关全部由 rosparam 传入**，不在代码里写死：
-       ~cylinder3d_root    Cylinder3D 工程根目录（默认 /home/heu/ros/projs/semantic_liosam/src/cylinder3d）
+       ~cylinder3d_root    Cylinder3D 工程根目录（默认 ~/deep_learning/lib/cylinder3d）
        ~model_path         权重路径（相对 root 或绝对路径；空 = 用 config 里的 train_params.model_use_path）
        ~keep_out_of_range  超出模型感知半径的点是否发布（label=0，保留几何）
        ~debug              打印每帧 parse/infer/pack 耗时
@@ -26,7 +26,7 @@ import rospy
 import ros_numpy
 from sensor_msgs.msg import PointCloud2, PointField
 
-DEFAULT_CYLINDER3D_ROOT = "/home/heu/deep_learning/lib/cylinder3d"
+DEFAULT_CYLINDER3D_ROOT = os.path.expanduser("~/deep_learning/lib/cylinder3d")
 
 DEBUG = False
 

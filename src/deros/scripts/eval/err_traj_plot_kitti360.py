@@ -83,9 +83,9 @@ if __name__ == "__main__":
     # ---------- 1. 修改路径与序列 ----------
     sequence = '06'
     # KITTI-360 真值（13列，首列帧号，世界坐标系）
-    gt_path = f"/media/heu/data/Study/Library/data_base/KITTI-360/sequences/{sequence}/poses/poses.txt"
+    gt_path = f"data/KITTI-360/sequences/{sequence}/poses/poses.txt"
     # 你的算法输出轨迹（12列，帧号从0开始）
-    est_path = f"/home/heu/ros/projs/DeRo-SLAM/src/ros/save/evo_log/kitti360_mapping_{sequence}.txt"
+    est_path = f"save/evo_log/kitti360_mapping_{sequence}.txt"
     save_img_path = f"kitti360_{sequence}_ape_xy.png"
 
     # ---------- 2. 读取轨迹 ----------

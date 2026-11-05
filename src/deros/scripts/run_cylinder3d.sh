@@ -9,5 +9,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # conda env 缺 netifaces（rospy 连接对端时要用），用系统 cpython-38 的 .so 兜底
 export PYTHONPATH="${HERE}/semantic/pyext:/opt/ros/noetic/lib/python3/dist-packages:${PYTHONPATH}"
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7
-exec /home/heu/application/Miniconda3/envs/cylinder3d/bin/python3 \
+# 解释器：默认系统 python3，可用 DEROS_CYLINDER3D_PY 指定 conda 环境
+PY="${DEROS_CYLINDER3D_PY:-python3}"
+exec "$PY" \
     "${HERE}/semantic/cylinder3d_ros_node.py" "$@"

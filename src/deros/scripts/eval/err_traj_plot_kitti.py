@@ -71,9 +71,9 @@ def umeyama_alignment(src, dst):
 if __name__ == "__main__":
     # ---------- 1. 修改你的文件路径 ----------
     sequence = '08'
-    gt_path = "/media/heu/data/Study/Library/data_base/KITTI/kitti_odometry/poses/"+sequence+".txt"
-    # est_path = "/home/heu/ros/projs/DeRo-SLAM/src/ros/save/evo_log/kitti_mapping_"+sequence+".txt"
-    est_path = "/home/heu/ros/projs/DeRo-SLAM/src/ros/save/debug_poses.txt"
+    gt_path = "data/KITTI/kitti_odometry/poses/"+sequence+".txt"
+    # est_path = "save/evo_log/kitti_mapping_"+sequence+".txt"
+    est_path = "save/debug_poses.txt"
     save_img_path = "kitti_"+sequence+"_ape_xz.png"
 
     # ---------- 2. 加载轨迹，长度对齐 ----------

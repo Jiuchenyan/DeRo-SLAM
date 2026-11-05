@@ -88,10 +88,10 @@ if __name__ == "__main__":
     # sequence = "sejong01"
 
     # KITTI-360 真值（13列，首列帧号，世界坐标系）
-    gt_path = f"/media/heu/data/Study/Library/data_base/mulran/{sequence}/poses/poses.txt"
+    gt_path = f"data/mulran/{sequence}/poses/poses.txt"
     # 你的算法输出轨迹（12列，帧号从0开始）
-    est_path = f"/home/heu/ros/projs/DeRo-SLAM/src/ros/save/evo_log/mulran_mapping_{sequence}.txt"
-    # est_path = f"/home/heu/ros/projs/DeRo-SLAM/src/ros/save/debug_poses.txt"
+    est_path = f"save/evo_log/mulran_mapping_{sequence}.txt"
+    # est_path = f"save/debug_poses.txt"
     save_img_path = f"mulran_{sequence}_ape_xy.png"
 
     # ---------- 2. 读取轨迹 ----------

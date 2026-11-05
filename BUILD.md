@@ -36,7 +36,8 @@ ldd src/deros_core/lib/libderos_core.so | grep "not found"
 ## Run
 
 The launch files live in `src/deros/launch/datasets` and
-`src/deros/launch/online`.
+`src/deros/launch/online`. Each one expects its dataset under `~/data/<dataset>`
+by default; override with `database_path:=/your/path`.
 
 Offline (default, `run_mode=2`: point clouds come from the bag):
 

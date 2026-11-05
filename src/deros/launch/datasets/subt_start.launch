@@ -2,7 +2,7 @@
   <arg name="icp_tolerance" default="1e-4"/><!-- ICP stop threshold; 0.001 is ~20% faster, sub-mm loss -->
   <arg name="icp_search_scale" default="0.1"/><!-- correspondence gate = scale * sigma (SubT: 200 m range) -->
   <arg name="icp_kernel_scale" default="12.0"/><!-- robust kernel width = sigma / scale (SubT: wide kernel) -->
-  <arg name="database_path" default="/media/heu/data/Study/Library/data_base/SubT-MRS"/>
+  <arg name="database_path" default="$(env HOME)/data/SubT-MRS"/>
   <arg name="save_path" default="$(find deros)/save/"/>   <!-- output dir, keep the trailing slash -->
   <arg name="sequence" default="long_Corridor"/>
   <arg name="keyframe_interval" default="10"/>

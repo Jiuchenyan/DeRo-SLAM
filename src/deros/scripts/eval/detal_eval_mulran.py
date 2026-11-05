@@ -234,13 +234,13 @@ sequences = "riverside02"
 # sequences = "sejong01"
 def main():
     parser = argparse.ArgumentParser(description='Evaluate SLAM on MulRan Dataset')
-    parser.add_argument('--gt_file', type=str, default='/media/heu/data/Study/Library/data_base/mulran/'+sequences+'/poses/poses.txt', help='真值文件：帧号+12维位姿')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/DeRo-SLAM/src/ros/save/evo_log/mulran_mapping_'+sequences+'.txt', help='预测文件：纯12维KITTI格式')
-    parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/SG-SLAM/src/ros/save/mulran_slam_poses_'+sequences+'.txt', help='预测文件：纯12维KITTI格式')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/MULLS/result/mulran/pose_l_lo_mulls_mulran_'+sequences+'_bin.txt', help='预测文件：纯12维KITTI格式')
-    # parser.add_argument('--pred_file',     type=str, default='/home/heu/ros/projs/saloam/result/mulran/mulran_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/SAGE/results/mulran/mulran_optimized_'+sequences+'.txt',  help='file path of the ground truth odometry')
-    # parser.add_argument('--pred_file', type=str, default='/home/heu/ros/projs/SAGE/results/mulran/mulran_no_foreground_optimized_'+sequences+'.txt',  help='file path of the ground truth odometry')
+    parser.add_argument('--gt_file', type=str, required=True+sequences+'/poses/poses.txt', help='真值文件：帧号+12维位姿')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt', help='预测文件：纯12维KITTI格式')
+    parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt', help='预测文件：纯12维KITTI格式')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'_bin.txt', help='预测文件：纯12维KITTI格式')
+    # parser.add_argument('--pred_file',     type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
+    # parser.add_argument('--pred_file', type=str, required=True+sequences+'.txt',  help='file path of the ground truth odometry')
 
     parser.add_argument('--seq', type=str, default=sequences, help='序列名称')
     parser.add_argument('--invert_pred', action='store_true', help='对预测位姿取逆，`修正变换方向')

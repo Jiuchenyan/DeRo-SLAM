@@ -13,7 +13,7 @@ SegNet4D 是 **4D（多帧）** 语义分割：需要当前帧 + 上一帧，并
 rosparam:
   ~cloud_topic        输入原始点云          (默认 /kitti/velo/pointcloud)
   ~semantic_topic     输出语义点云          (默认 /kitti/velo/semantic_pointcloud)
-  ~segnet4d_root      SegNet4D 工程根目录   (默认 /home/heu/deep_learning/lib/SegNet4D)
+  ~segnet4d_root      SegNet4D 工程根目录   (默认 ~/deep_learning/lib/SegNet4D)
   ~model_path         权重路径（*必填*，官网下载的 .ckpt/.bin）
   ~motion_source      tf / none
   ~tf_fixed_frame     tf 世界系 (默认 world)
@@ -37,7 +37,7 @@ import torch.nn.functional as F
 from sensor_msgs.msg import PointCloud2, PointField
 from tf2_msgs.msg import TFMessage
 
-DEFAULT_SEGNET4D_ROOT = "/home/heu/deep_learning/lib/SegNet4D"
+DEFAULT_SEGNET4D_ROOT = os.path.expanduser("~/deep_learning/lib/SegNet4D")
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 DEBUG = False
 

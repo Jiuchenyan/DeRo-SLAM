@@ -27,11 +27,11 @@
   <!-- ===== 模型配置（唯一入口）===== -->
   <!-- 通用权重路径：空 = 用下面各后端的默认权重；可给绝对路径（相对路径按该后端工程根目录解析） -->
   <arg name="model_path" default=""/>
-  <arg name="cylinder3d_root" default="/home/heu/deep_learning/lib/cylinder3d"/>
+  <arg name="cylinder3d_root" default="$(env HOME)/deep_learning/lib/cylinder3d"/>
   <arg name="cylinder3d_default_model" default="model_save_dir/student8_61.53.pt"/>
-  <arg name="randlanet_root" default="/home/heu/deep_learning/lib/RandLA-Net-pytorch-main"/>
+  <arg name="randlanet_root" default="$(env HOME)/deep_learning/lib/RandLA-Net-pytorch-main"/>
   <arg name="randlanet_default_model" default="$(arg randlanet_root)/pretrain_model/checkpoint.tar"/>
-  <arg name="segnet4d_root" default="/home/heu/deep_learning/lib/SegNet4D"/>
+  <arg name="segnet4d_root" default="$(env HOME)/deep_learning/lib/SegNet4D"/>
   <arg name="segnet4d_default_model" default="checkpoint/semantickitti.ckpt..bin"/>
 
   <!-- 实际生效的权重路径 -->

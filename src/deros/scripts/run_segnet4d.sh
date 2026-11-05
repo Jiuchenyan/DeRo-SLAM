@@ -1,6 +1,6 @@
 #!/bin/bash
 # DeRo-SLAM 在线语义推理（SegNet4D，4D 多帧模型）
-# Python 环境：/home/heu/application/venvs/segnet4d
+# Python 环境：一个含 torch / spconv / pytorch-lightning 的虚拟环境
 #   （由 openpoints 的 python3.8 建的 venv：torch 2.4.1 + spconv-cu120 + pytorch-lightning 1.5.10
 #     + torch-geometric/torch-cluster；sptr_cuda、iou3d_nms_cuda、Array_Index 已编译）
 # 可用环境变量 DEROS_SEGNET4D_PY 覆盖解释器路径。
@@ -8,7 +8,7 @@
 #   rosrun deros run_segnet4d.sh _model_path:=/path/to/semantickitti.ckpt..bin
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-PY="${DEROS_SEGNET4D_PY:-/home/heu/application/venvs/segnet4d/bin/python}"
+PY="${DEROS_SEGNET4D_PY:-python3}"
 
 # conda/venv 缺 netifaces（rospy 连接对端时要用），用系统 cpython-38 的 .so 兜底
 export PYTHONPATH="${HERE}/semantic/pyext:/opt/ros/noetic/lib/python3/dist-packages:${PYTHONPATH}"
