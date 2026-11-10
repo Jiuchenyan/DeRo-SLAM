@@ -90,7 +90,7 @@ by default; override with `database_path:=/your/path`.
 
 Offline (default, `run_mode=2`: point clouds come from the bag):
 
-    roslaunch deros kitti_start.launch sequence:=00
+    roslaunch deros kitti_start.launch          # sequence 04 (bundled test data)
 
 Online semantic mode (`run_mode=3`: subscribe to the cloud published by a
 semantic inference node, see `launch/online/semantic_inference.launch`):

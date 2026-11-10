@@ -109,7 +109,8 @@ catkin_make -j$(nproc)
 source devel/setup.bash
 
 # offline: point clouds and labels are read from the bag
-roslaunch deros kitti_start.launch sequence:=00
+# sequence 04 is the bundled test sequence; use sequence:=XX for others
+roslaunch deros kitti_start.launch
 ```
 
 Each run writes the odometry and mapping trajectories to
@@ -123,7 +124,7 @@ See **[BUILD.md](BUILD.md)** for dependencies, the full argument list and the
 
 | dataset | launch file |
 |---|---|
-| KITTI | `kitti_start.launch sequence:=00` |
+| KITTI | `kitti_start.launch` (sequence 04 by default) |
 | KITTI-360 | `kitti360_start.launch sequence:=00` |
 | TrackLoop | `trackloop_start.launch` |
 | SubT-MRS | `subt_start.launch` |
@@ -147,24 +148,35 @@ repository: KITTI odometry **sequence 04**, 271 frames.
 | [kitti04_calib.txt](https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/kitti04_calib.txt) | calibration (`P0`–`P3` and `Tr`) used by the evaluation script |
 
 ```bash
-mkdir -p ~/data/kitti04 && cd ~/data/kitti04
-for f in kitti04.bag kitti04_gt.txt kitti04_calib.txt; do
-  wget https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0/$f
-done
+mkdir -p ~/data/KITTI/{rosbag,poses,calib}
+BASE=https://github.com/Jiuchenyan/DeRo-SLAM/releases/download/v0.1.0
 
-# run + evaluate
-roslaunch deros kitti_start.launch sequence:=04 run_mode:=2 \
-    launch_bag:=false launch_semantic:=false visualize:=false \
-    bag_file:=$HOME/data/kitti04/kitti04.bag \
-    save_path:=$HOME/data/kitti04/out/ \
-    eval_cmd:="python3 \$(rospack find deros)/scripts/eval/detal_eval_kitti.py \
-               --gt_file $HOME/data/kitti04/kitti04_gt.txt \
-               --pred_file $HOME/data/kitti04/out/evo_log/kitti_mapping_04.txt \
-               --calib_file $HOME/data/kitti04/kitti04_calib.txt"
+wget -O ~/data/KITTI/rosbag/kitti04.bag $BASE/kitti04.bag
+wget -O ~/data/KITTI/poses/04.txt       $BASE/kitti04_gt.txt
+wget -O ~/data/KITTI/calib/04.txt       $BASE/kitti04_calib.txt
+
+catkin_make -j$(nproc)
+source devel/setup.bash
+roslaunch deros kitti_start.launch        # sequence defaults to 04
 ```
 
-The trajectories land in `~/data/kitti04/out/evo_log/`, the global map in
-`~/data/kitti04/out/map/`, and the ATE is printed when the run finishes.
+The launch file reads a fixed layout, so the two text files are renamed while
+downloading: the bag keeps its `kitti<seq>.bag` name under `rosbag/`, the ground
+truth and the calibration become `<seq>.txt` under `poses/` and `calib/`:
+
+```
+~/data/KITTI/
+├── rosbag/kitti04.bag
+├── poses/04.txt
+└── calib/04.txt
+```
+
+Other sequences follow the same rule — `sequence:=05` reads
+`rosbag/kitti05.bag`, `poses/05.txt`, `calib/05.txt`. If the data lives
+elsewhere, pass `database_path:=/your/path` and keep the three subdirectories.
+
+The trajectories land in `src/deros/save/evo_log/`, the global map in
+`src/deros/save/map/`, and the ATE is printed when the run finishes.
 
 The semantic labels in the bag were produced by running **Cylinder3D**
 inference on the raw scans; the **SemanticKITTI ground-truth** labels can be
