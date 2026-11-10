@@ -33,6 +33,10 @@ if(NOT GTSAM_FOUND AND NOT GTSAM_LIBRARY)
     "Install it as described in BUILD.md, or point CMake at an existing build:\n"
     "  catkin_make -DGTSAM_DIR=/path/to/gtsam/lib/cmake/GTSAM\n"
     "  catkin_make -DGTSAM_LIBRARY=/path/to/libgtsam.so.4")
+elseif(GTSAM_FOUND)
+  message(STATUS "GTSAM: ${GTSAM_DIR} (CMake config)")
+else()
+  message(STATUS "GTSAM: ${GTSAM_LIBRARY} (no CMake config, linked directly)")
 endif()
 catkin_package()
 
