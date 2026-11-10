@@ -41,11 +41,11 @@ second-best. Runtime is offline per-frame latency (ms).
 
 | Dataset | Metric | SUMA++ | MULLS | SA-LOAM | SAGE-ICP | SG-SLAM | **Ours** |
 |---|---|---|---|---|---|---|---|
-| KITTI | Mean ATE | 3.08 | 1.89 | 3.10 | 1.47 | <u>1.13</u> | **0.80** |
+| KITTI | Mean ATE | 3.08 | 1.89 | 3.06 | 1.47 | <u>1.13</u> | **0.80** |
 | KITTI | Time (ms) | 13.08 | 16.30 | 45.73 | <u>8.95</u> | **8.55** | 10.84 |
-| KITTI-360 | Mean ATE | 17.44 | 19.30 | 27.89 | 12.14 | <u>8.71</u> | **5.28** |
+| KITTI-360 | Mean ATE | 17.44 | 19.30 | 27.89 | 12.14 | <u>8.71</u> | **5.15** |
 | KITTI-360 | Time (ms) | 17.84 | 22.03 | 42.28 | <u>9.39</u> | **9.30** | 10.97 |
-| TrackLoop | ATE | 10.38 | 0.91 | <u>0.51</u> | 0.63 | 0.62 | **0.47** |
+| TrackLoop | ATE | 10.38 | 0.91 | <u>0.50</u> | 0.62 | 0.64 | **0.47** |
 | TrackLoop | Time (ms) | **10.19** | <u>10.84</u> | 32.82 | 11.08 | 11.12 | 11.66 |
 
 ### Indoor corridors (SubT-MRS)
