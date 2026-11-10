@@ -17,7 +17,8 @@ sudo apt install libgoogle-glog-dev libsuitesparse-dev libopenblas-dev \
                  libtbb-dev libopencv-dev
 ```
 
-- GTSAM 4.x (`libgtsam.so.4`), built from source or from your distribution
+- GTSAM **4.2.0 built with TBB** (`libgtsam.so.4`) — see
+  [GTSAM](#gtsam-required) below
 - Eigen and Sophus headers are vendored under
   `src/deros_core/include/third_party` — nothing to install
 - No GPU / CUDA is needed
@@ -27,6 +28,37 @@ Check the runtime dependencies of the prebuilt core with:
 ```bash
 ldd src/deros_core/lib/libderos_core.so | grep "not found"
 ```
+
+### GTSAM (required)
+
+`libderos_core.so` is linked against `libgtsam.so.4` and exports symbols that
+depend on its exact ABI, including the TBB allocator
+(`std::vector<... tbb::tbb_allocator<...>>`). GTSAM built **without** TBB, or a
+different version such as 4.0.3 / 4.1.1, fails at link time with undefined
+references to `gtsam::*`.
+
+```bash
+git clone -b 4.2.0 https://github.com/borglab/gtsam.git
+cmake -S gtsam -B gtsam/build \
+      -DGTSAM_USE_TBB=ON \
+      -DGTSAM_BUILD_EXAMPLES_AND_TESTS=OFF \
+      -DGTSAM_BUILD_UNSTABLE=OFF \
+      -DCMAKE_INSTALL_PREFIX=/usr/local
+cmake --build gtsam/build -j$(nproc)
+sudo cmake --install gtsam/build
+sudo ldconfig
+```
+
+If GTSAM is installed somewhere else, tell CMake where to look:
+
+```bash
+catkin_make -DGTSAM_DIR=/path/to/gtsam/lib/cmake/GTSAM
+# or, if there is no CMake config file:
+catkin_make -DGTSAM_LIBRARY=/path/to/libgtsam.so.4
+```
+
+If GTSAM is missing, `cmake` now stops with this message instead of failing
+later in the linker.
 
 ## Build
 

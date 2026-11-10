@@ -17,9 +17,23 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs nav_msgs sensor_msgs roscpp rosbag std_msgs cv_bridge tf tf2 tf2_ros)
 find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui features2d calib3d)
-# libderos_core.so imports a few symbols from GTSAM; the loader resolves them
-# through the library, but the linker wants to see the dependency as well.
+# libderos_core.so is dynamically linked against libgtsam.so.4, which was built
+# from GTSAM 4.2.0 with TBB. The same ABI has to be visible at link time.
 find_package(GTSAM QUIET)
+if(NOT GTSAM_FOUND)
+  find_library(GTSAM_LIBRARY NAMES gtsam
+               PATHS /usr/local/lib /usr/lib/x86_64-linux-gnu /usr/lib)
+endif()
+if(NOT GTSAM_FOUND AND NOT GTSAM_LIBRARY)
+  message(FATAL_ERROR
+    "GTSAM not found.\n"
+    "libderos_core.so is linked against libgtsam.so.4, built from GTSAM 4.2.0 with TBB\n"
+    "(GTSAM_USE_TBB=ON). A different version, or a build without TBB, fails at link\n"
+    "time with undefined references to gtsam::* symbols.\n"
+    "Install it as described in BUILD.md, or point CMake at an existing build:\n"
+    "  catkin_make -DGTSAM_DIR=/path/to/gtsam/lib/cmake/GTSAM\n"
+    "  catkin_make -DGTSAM_LIBRARY=/path/to/libgtsam.so.4")
+endif()
 catkin_package()
 
 set(DEROS_CORE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../deros_core")
@@ -51,6 +65,8 @@ target_link_libraries(deros_node PRIVATE
 
 if(GTSAM_FOUND)
   target_link_libraries(deros_node PRIVATE gtsam)
+elseif(GTSAM_LIBRARY)
+  target_link_libraries(deros_node PRIVATE ${GTSAM_LIBRARY})
 endif()
 
 # Sophus is header only and, without this switch, drags fmt in. The library is

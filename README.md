@@ -88,8 +88,9 @@ sudo apt install libgoogle-glog-dev libsuitesparse-dev libopenblas-dev \
                  libtbb-dev libopencv-dev
 ```
 
-- GTSAM 4.x (`libgtsam.so.4`) — build it from source or use your
-  distribution's package
+- GTSAM **4.2.0 built with TBB** (`libgtsam.so.4`) — build it from source as
+  shown in [BUILD.md](BUILD.md#gtsam-required); other versions, or a build
+  without TBB, fail at link time
 - Eigen and Sophus are vendored under `src/deros_core/include/third_party`;
   nothing else has to be installed for them
 
