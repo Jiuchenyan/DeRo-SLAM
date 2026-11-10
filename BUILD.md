@@ -9,12 +9,13 @@ read and modified freely.
 ## Requirements
 
 - Ubuntu 20.04 + ROS Noetic
-- OpenCV 4, TBB, glog, OpenBLAS and Suitesparse (the shared libraries
-  `libderos_core.so` links against):
+- OpenCV 4, TBB, glog, OpenBLAS, Suitesparse and Boost (the shared libraries
+  `libderos_core.so` links against, plus the Boost components GTSAM's CMake
+  config requires):
 
 ```bash
 sudo apt install libgoogle-glog-dev libsuitesparse-dev libopenblas-dev \
-                 libtbb-dev libopencv-dev
+                 libtbb-dev libopencv-dev libboost-all-dev
 ```
 
 - GTSAM **4.2.0 built with TBB** (`libgtsam.so.4`) — see
@@ -38,7 +39,7 @@ different version such as 4.0.3 / 4.1.1, fails at link time with undefined
 references to `gtsam::*`.
 
 ```bash
-git clone -b 4.2.0 https://github.com/borglab/gtsam.git
+git clone -b 4.2.0 --depth 1 https://github.com/borglab/gtsam.git
 cmake -S gtsam -B gtsam/build \
       -DGTSAM_USE_TBB=ON \
       -DGTSAM_BUILD_EXAMPLES_AND_TESTS=OFF \
@@ -49,12 +50,28 @@ sudo cmake --install gtsam/build
 sudo ldconfig
 ```
 
+`libtbb-dev` must already be installed **before** the configure step: if TBB is
+missing, GTSAM quietly builds without it and the resulting library still fails
+to link against `libderos_core.so`. Verify the result before going further:
+
+```bash
+nm -D -C /usr/local/lib/libgtsam.so.4 | grep -c tbb_allocator   # must be > 0
+ldconfig -p | grep libgtsam.so.4                                 # must list /usr/local/lib
+```
+
 If GTSAM is installed somewhere else, tell CMake where to look:
 
 ```bash
 catkin_make -DGTSAM_DIR=/path/to/gtsam/lib/cmake/GTSAM
 # or, if there is no CMake config file:
 catkin_make -DGTSAM_LIBRARY=/path/to/libgtsam.so.4
+```
+
+A distribution GTSAM under `/usr` (4.0.3 / 4.1.1) does not help and is shadowed
+by the `/usr/local` copy. `cmake` prints which one it resolved:
+
+```
+-- GTSAM: /usr/local/lib/cmake/GTSAM (CMake config)
 ```
 
 If GTSAM is missing, `cmake` now stops with this message instead of failing
